@@ -34,7 +34,7 @@ public class User {
     @OneToMany(mappedBy = "organizer", cascade = CascadeType.ALL)
     List<Event> organizedEvents = new ArrayList<>();
 
-    @ManyToMany(mappedBy = "attendees")
+    @ManyToMany
     @JoinTable(
             name = "user_attending_events",
             joinColumns = @JoinColumn(name = "user_id"),

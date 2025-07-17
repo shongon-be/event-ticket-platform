@@ -1,8 +1,9 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost5432/postgres
+    url: jdbc:postgresql://localhost:5432/postgres
     username: postgres
     password: changemeinprod!
+    driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
       ddl-auto: update
@@ -10,7 +11,7 @@ spring:
     properties:
       hibernate:
         format_sql: true
-        dialect: org.hibernate.dialect.PostgreSQLDialect
+    open-in-view: off
   security:
     oauth2:
       resourceserver:
