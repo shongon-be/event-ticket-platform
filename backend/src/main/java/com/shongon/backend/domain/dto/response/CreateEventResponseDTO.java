@@ -19,8 +19,8 @@ public class CreateEventResponseDTO {
 
     UUID id;
     String name;
-    LocalDateTime startDate;
-    LocalDateTime endDate;
+    LocalDateTime start;
+    LocalDateTime end;
     String venue;
     LocalDateTime salesStart;
     LocalDateTime salesEnd;

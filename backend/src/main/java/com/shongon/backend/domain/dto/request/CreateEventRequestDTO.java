@@ -23,9 +23,9 @@ public class CreateEventRequestDTO {
     @NotBlank(message = "Event name is required")
     String name;
 
-    LocalDateTime startDate;
+    LocalDateTime start;
 
-    LocalDateTime endDate;
+    LocalDateTime end;
 
     @NotBlank(message = "Venue information is required")
     String venue;
