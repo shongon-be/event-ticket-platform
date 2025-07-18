@@ -2,6 +2,7 @@ package com.shongon.backend.service.blueprint;
 
 import com.shongon.backend.domain.entity.Event;
 import com.shongon.backend.domain.request.CreateEventRequest;
+import com.shongon.backend.domain.request.UpdateEventRequest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -12,4 +13,5 @@ public interface EventService {
     Event createEvent(UUID organizerId, CreateEventRequest event);
     Page<Event> listEventsForOrganizer(UUID organizerId, Pageable pageable);
     Optional<Event> getEventForOrganizer(UUID organizerId, UUID eventId);
+    Event updateEventForOrganizer(UUID organizerId, UUID eventId, UpdateEventRequest event);
 }

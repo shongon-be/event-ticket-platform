@@ -1,11 +1,14 @@
 package com.shongon.backend.controller;
 
 import com.shongon.backend.domain.dto.request.CreateEventRequestDTO;
+import com.shongon.backend.domain.dto.request.UpdateEventRequestDTO;
 import com.shongon.backend.domain.dto.response.CreateEventResponseDTO;
 import com.shongon.backend.domain.dto.response.GetEventDetailsResponseDTO;
 import com.shongon.backend.domain.dto.response.ListEventResponseDTO;
+import com.shongon.backend.domain.dto.response.UpdateEventResponseDTO;
 import com.shongon.backend.domain.entity.Event;
 import com.shongon.backend.domain.request.CreateEventRequest;
+import com.shongon.backend.domain.request.UpdateEventRequest;
 import com.shongon.backend.mapper.EventMapper;
 import com.shongon.backend.service.blueprint.EventService;
 import jakarta.validation.Valid;
@@ -75,6 +78,27 @@ public class EventController {
                 .map(eventMapper::toGetEventDetailsResponseDTO)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
+    }
+
+
+    @PutMapping(path = "/{eventId}")
+    public ResponseEntity<UpdateEventResponseDTO> updateEvent(
+            @AuthenticationPrincipal Jwt jwt,
+            @PathVariable UUID eventId,
+            @Valid @RequestBody UpdateEventRequestDTO updateEventRequestDTO)
+    {
+
+        UpdateEventRequest updateEventRequest = eventMapper.fromUpdateEventRequestDTO(updateEventRequestDTO);
+
+        UUID userId = parseUserId(jwt);
+
+        Event updatedEvent = eventService.updateEventForOrganizer(
+                userId, eventId, updateEventRequest
+        );
+
+        UpdateEventResponseDTO updateEventResponseDTO = eventMapper.toUpdateEventResponseDTO(updatedEvent);
+
+        return ResponseEntity.ok(updateEventResponseDTO);
     }
 
 
