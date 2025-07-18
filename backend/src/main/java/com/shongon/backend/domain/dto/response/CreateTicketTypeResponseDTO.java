@@ -14,7 +14,6 @@ import java.util.UUID;
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class CreateTicketTypeResponseDTO {
-
     UUID id;
     String name;
     Double price;

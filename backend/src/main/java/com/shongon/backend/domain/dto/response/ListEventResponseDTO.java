@@ -1,5 +1,6 @@
 package com.shongon.backend.domain.dto.response;
 
+import com.shongon.backend.domain.enums.EventStatusEnum;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -24,7 +25,7 @@ public class ListEventResponseDTO {
     String venue;
     LocalDateTime salesStart;
     LocalDateTime salesEnd;
-    String status;
+    EventStatusEnum status;
     List<ListEventTicketTypeResponseDTO> ticketTypes = new ArrayList<>();
 
 }

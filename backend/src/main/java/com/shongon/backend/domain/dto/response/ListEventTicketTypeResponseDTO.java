@@ -14,11 +14,9 @@ import java.util.UUID;
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ListEventTicketTypeResponseDTO {
-
     UUID id;
     String name;
     Double price;
     String description;
     Integer totalAvailable;
-
 }

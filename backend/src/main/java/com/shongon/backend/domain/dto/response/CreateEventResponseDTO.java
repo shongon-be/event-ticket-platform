@@ -16,7 +16,6 @@ import java.util.UUID;
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class CreateEventResponseDTO {
-
     UUID id;
     String name;
     LocalDateTime start;
