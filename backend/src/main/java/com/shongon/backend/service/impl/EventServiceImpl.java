@@ -11,6 +11,8 @@ import com.shongon.backend.service.blueprint.EventService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -48,8 +50,8 @@ public class EventServiceImpl implements EventService {
 
 
         eventToCreate.setName(event.getName());
-        eventToCreate.setStartDate(event.getStartDate());
-        eventToCreate.setEndDate(event.getEndDate());
+        eventToCreate.setStart(event.getStartDate());
+        eventToCreate.setEnd(event.getEndDate());
         eventToCreate.setVenue(event.getVenue());
         eventToCreate.setSalesStart(event.getSalesStart());
         eventToCreate.setSalesEnd(event.getSalesEnd());
@@ -58,5 +60,10 @@ public class EventServiceImpl implements EventService {
         eventToCreate.setTicketTypes(ticketTypesToCreate);
 
         return eventRepository.save(eventToCreate);
+    }
+
+    @Override
+    public Page<Event> listEventsForOrganizer(UUID organizerId, Pageable pageable) {
+        return eventRepository.findByOrganizerId(organizerId, pageable);
     }
 }
