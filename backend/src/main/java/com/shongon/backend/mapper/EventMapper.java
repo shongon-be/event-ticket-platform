@@ -2,9 +2,7 @@ package com.shongon.backend.mapper;
 
 import com.shongon.backend.domain.dto.request.CreateEventRequestDTO;
 import com.shongon.backend.domain.dto.request.CreateTicketTypeRequestDTO;
-import com.shongon.backend.domain.dto.response.CreateEventResponseDTO;
-import com.shongon.backend.domain.dto.response.ListEventResponseDTO;
-import com.shongon.backend.domain.dto.response.ListEventTicketTypeResponseDTO;
+import com.shongon.backend.domain.dto.response.*;
 import com.shongon.backend.domain.entity.Event;
 import com.shongon.backend.domain.entity.TicketType;
 import com.shongon.backend.domain.request.CreateEventRequest;
@@ -24,4 +22,8 @@ public interface EventMapper {
     ListEventTicketTypeResponseDTO toDTO(TicketType ticketType);
 
     ListEventResponseDTO toListEventResponseDTO(Event event);
+
+    GetEventDetailsTiketTypesResponseDTO toGetEventDetailsTiketTypesResponseDTO(TicketType ticketType);
+
+    GetEventDetailsResponseDTO toGetEventDetailsResponseDTO(Event event);
 }

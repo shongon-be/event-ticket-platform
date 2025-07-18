@@ -2,6 +2,7 @@ package com.shongon.backend.controller;
 
 import com.shongon.backend.domain.dto.request.CreateEventRequestDTO;
 import com.shongon.backend.domain.dto.response.CreateEventResponseDTO;
+import com.shongon.backend.domain.dto.response.GetEventDetailsResponseDTO;
 import com.shongon.backend.domain.dto.response.ListEventResponseDTO;
 import com.shongon.backend.domain.entity.Event;
 import com.shongon.backend.domain.request.CreateEventRequest;
@@ -60,6 +61,20 @@ public class EventController {
         return ResponseEntity.ok(
                 events.map(eventMapper::toListEventResponseDTO)
         );
+    }
+
+    @GetMapping(path = "/{eventId}")
+    public ResponseEntity<GetEventDetailsResponseDTO> getEvent(
+            @AuthenticationPrincipal Jwt jwt,
+            @PathVariable UUID eventId
+    ){
+
+        UUID userId = parseUserId(jwt);
+
+        return eventService.getEventForOrganizer(userId, eventId)
+                .map(eventMapper::toGetEventDetailsResponseDTO)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
 
