@@ -1,6 +1,7 @@
-package com.shongon.backend.domain.request;
+package com.shongon.backend.domain.request.event;
 
 import com.shongon.backend.domain.enums.EventStatusEnum;
+import com.shongon.backend.domain.request.ticket_type.UpdateTicketTypeRequest;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -10,18 +11,20 @@ import lombok.experimental.FieldDefaults;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class CreateEventRequest {
+public class UpdateEventRequest {
+    UUID id;
     String name;
-    LocalDateTime startDate;
-    LocalDateTime endDate;
+    LocalDateTime start;
+    LocalDateTime end;
     String venue;
     LocalDateTime salesStart;
     LocalDateTime salesEnd;
     EventStatusEnum status;
-    List<CreateTicketTypeRequest> ticketTypes = new ArrayList<>();
+    List<UpdateTicketTypeRequest> ticketTypes = new ArrayList<>();
 }

@@ -1,8 +1,8 @@
 package com.shongon.backend.service.blueprint;
 
 import com.shongon.backend.domain.entity.Event;
-import com.shongon.backend.domain.request.CreateEventRequest;
-import com.shongon.backend.domain.request.UpdateEventRequest;
+import com.shongon.backend.domain.request.event.CreateEventRequest;
+import com.shongon.backend.domain.request.event.UpdateEventRequest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 

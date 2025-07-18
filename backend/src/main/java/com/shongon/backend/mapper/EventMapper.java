@@ -13,10 +13,10 @@ import com.shongon.backend.domain.dto.response.ticket_type.ListEventTicketTypeRe
 import com.shongon.backend.domain.dto.response.ticket_type.UpdateTicketTypeResponseDTO;
 import com.shongon.backend.domain.entity.Event;
 import com.shongon.backend.domain.entity.TicketType;
-import com.shongon.backend.domain.request.CreateEventRequest;
-import com.shongon.backend.domain.request.CreateTicketTypeRequest;
-import com.shongon.backend.domain.request.UpdateEventRequest;
-import com.shongon.backend.domain.request.UpdateTicketTypeRequest;
+import com.shongon.backend.domain.request.event.CreateEventRequest;
+import com.shongon.backend.domain.request.ticket_type.CreateTicketTypeRequest;
+import com.shongon.backend.domain.request.event.UpdateEventRequest;
+import com.shongon.backend.domain.request.ticket_type.UpdateTicketTypeRequest;
 import org.mapstruct.Mapper;
 import org.mapstruct.ReportingPolicy;
 

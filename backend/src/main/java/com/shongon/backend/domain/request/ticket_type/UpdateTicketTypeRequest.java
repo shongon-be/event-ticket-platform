@@ -1,4 +1,4 @@
-package com.shongon.backend.domain.request;
+package com.shongon.backend.domain.request.ticket_type;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
