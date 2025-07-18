@@ -1,11 +1,11 @@
 package com.shongon.backend.controller;
 
-import com.shongon.backend.domain.dto.request.CreateEventRequestDTO;
-import com.shongon.backend.domain.dto.request.UpdateEventRequestDTO;
-import com.shongon.backend.domain.dto.response.CreateEventResponseDTO;
-import com.shongon.backend.domain.dto.response.GetEventDetailsResponseDTO;
-import com.shongon.backend.domain.dto.response.ListEventResponseDTO;
-import com.shongon.backend.domain.dto.response.UpdateEventResponseDTO;
+import com.shongon.backend.domain.dto.request.event.CreateEventRequestDTO;
+import com.shongon.backend.domain.dto.request.event.UpdateEventRequestDTO;
+import com.shongon.backend.domain.dto.response.event.CreateEventResponseDTO;
+import com.shongon.backend.domain.dto.response.event.GetEventDetailsResponseDTO;
+import com.shongon.backend.domain.dto.response.event.ListEventResponseDTO;
+import com.shongon.backend.domain.dto.response.event.UpdateEventResponseDTO;
 import com.shongon.backend.domain.entity.Event;
 import com.shongon.backend.domain.request.CreateEventRequest;
 import com.shongon.backend.domain.request.UpdateEventRequest;

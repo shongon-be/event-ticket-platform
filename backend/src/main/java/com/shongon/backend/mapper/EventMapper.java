@@ -1,10 +1,16 @@
 package com.shongon.backend.mapper;
 
-import com.shongon.backend.domain.dto.request.CreateEventRequestDTO;
-import com.shongon.backend.domain.dto.request.CreateTicketTypeRequestDTO;
-import com.shongon.backend.domain.dto.request.UpdateEventRequestDTO;
-import com.shongon.backend.domain.dto.request.UpdateTicketTypeRequestDTO;
-import com.shongon.backend.domain.dto.response.*;
+import com.shongon.backend.domain.dto.request.event.CreateEventRequestDTO;
+import com.shongon.backend.domain.dto.request.ticket_type.CreateTicketTypeRequestDTO;
+import com.shongon.backend.domain.dto.request.event.UpdateEventRequestDTO;
+import com.shongon.backend.domain.dto.request.ticket_type.UpdateTicketTypeRequestDTO;
+import com.shongon.backend.domain.dto.response.event.CreateEventResponseDTO;
+import com.shongon.backend.domain.dto.response.event.GetEventDetailsResponseDTO;
+import com.shongon.backend.domain.dto.response.event.ListEventResponseDTO;
+import com.shongon.backend.domain.dto.response.event.UpdateEventResponseDTO;
+import com.shongon.backend.domain.dto.response.ticket_type.GetEventDetailsTiketTypesResponseDTO;
+import com.shongon.backend.domain.dto.response.ticket_type.ListEventTicketTypeResponseDTO;
+import com.shongon.backend.domain.dto.response.ticket_type.UpdateTicketTypeResponseDTO;
 import com.shongon.backend.domain.entity.Event;
 import com.shongon.backend.domain.entity.TicketType;
 import com.shongon.backend.domain.request.CreateEventRequest;

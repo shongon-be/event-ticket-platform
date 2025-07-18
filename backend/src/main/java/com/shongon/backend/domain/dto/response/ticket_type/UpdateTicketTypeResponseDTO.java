@@ -1,4 +1,4 @@
-package com.shongon.backend.domain.dto.response;
+package com.shongon.backend.domain.dto.response.ticket_type;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -13,7 +13,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class GetEventDetailsTiketTypesResponseDTO {
+public class UpdateTicketTypeResponseDTO {
     UUID id;
     String name;
     Double price;

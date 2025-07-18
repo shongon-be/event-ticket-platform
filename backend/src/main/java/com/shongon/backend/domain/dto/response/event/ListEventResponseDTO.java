@@ -1,5 +1,6 @@
-package com.shongon.backend.domain.dto.response;
+package com.shongon.backend.domain.dto.response.event;
 
+import com.shongon.backend.domain.dto.response.ticket_type.ListEventTicketTypeResponseDTO;
 import com.shongon.backend.domain.enums.EventStatusEnum;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -8,6 +9,7 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -15,7 +17,8 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class CreateEventResponseDTO {
+public class ListEventResponseDTO {
+
     UUID id;
     String name;
     LocalDateTime start;
@@ -24,7 +27,6 @@ public class CreateEventResponseDTO {
     LocalDateTime salesStart;
     LocalDateTime salesEnd;
     EventStatusEnum status;
-    List<CreateTicketTypeResponseDTO> ticketTypes;
-    String createdAt;
-    String updatedAt;
+    List<ListEventTicketTypeResponseDTO> ticketTypes = new ArrayList<>();
+
 }

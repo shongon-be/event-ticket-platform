@@ -1,4 +1,4 @@
-package com.shongon.backend.domain.dto.request;
+package com.shongon.backend.domain.dto.request.ticket_type;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

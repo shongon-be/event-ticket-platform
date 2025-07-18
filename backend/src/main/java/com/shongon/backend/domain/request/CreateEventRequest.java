@@ -1,6 +1,5 @@
 package com.shongon.backend.domain.request;
 
-import com.shongon.backend.domain.entity.User;
 import com.shongon.backend.domain.enums.EventStatusEnum;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;

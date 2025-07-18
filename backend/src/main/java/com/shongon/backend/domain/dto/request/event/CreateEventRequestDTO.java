@@ -1,5 +1,6 @@
-package com.shongon.backend.domain.dto.request;
+package com.shongon.backend.domain.dto.request.event;
 
+import com.shongon.backend.domain.dto.request.ticket_type.CreateTicketTypeRequestDTO;
 import com.shongon.backend.domain.enums.EventStatusEnum;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
