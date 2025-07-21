@@ -1,6 +1,7 @@
 package com.shongon.backend.repository;
 
 import com.shongon.backend.domain.entity.Event;
+import com.shongon.backend.domain.enums.EventStatusEnum;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
@@ -20,4 +21,6 @@ public interface EventRepository extends JpaRepository<Event, UUID> {
 
     @EntityGraph(attributePaths = "ticketTypes")
     Optional<Event> findByIdAndOrganizerId(UUID id, UUID organizerId);
+
+    Page<Event> findByStatus(EventStatusEnum status, Pageable pageable);
 }

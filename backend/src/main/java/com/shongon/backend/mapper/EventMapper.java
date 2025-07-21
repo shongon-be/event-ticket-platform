@@ -4,10 +4,7 @@ import com.shongon.backend.domain.dto.request.event.CreateEventRequestDTO;
 import com.shongon.backend.domain.dto.request.ticket_type.CreateTicketTypeRequestDTO;
 import com.shongon.backend.domain.dto.request.event.UpdateEventRequestDTO;
 import com.shongon.backend.domain.dto.request.ticket_type.UpdateTicketTypeRequestDTO;
-import com.shongon.backend.domain.dto.response.event.CreateEventResponseDTO;
-import com.shongon.backend.domain.dto.response.event.GetEventDetailsResponseDTO;
-import com.shongon.backend.domain.dto.response.event.ListEventResponseDTO;
-import com.shongon.backend.domain.dto.response.event.UpdateEventResponseDTO;
+import com.shongon.backend.domain.dto.response.event.*;
 import com.shongon.backend.domain.dto.response.ticket_type.GetEventDetailsTiketTypesResponseDTO;
 import com.shongon.backend.domain.dto.response.ticket_type.ListEventTicketTypeResponseDTO;
 import com.shongon.backend.domain.dto.response.ticket_type.UpdateTicketTypeResponseDTO;
@@ -48,4 +45,7 @@ public interface EventMapper {
     UpdateTicketTypeResponseDTO toUpdateTicketTypeResponseDTO(TicketType ticketType);
 
     UpdateEventResponseDTO toUpdateEventResponseDTO(Event event);
+
+        // List published
+    ListPublishedEventResponseDTO toListPublishedEventResponseDTO(Event event);
 }

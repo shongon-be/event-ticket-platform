@@ -3,6 +3,7 @@ package com.shongon.backend.service.impl;
 import com.shongon.backend.domain.entity.Event;
 import com.shongon.backend.domain.entity.TicketType;
 import com.shongon.backend.domain.entity.User;
+import com.shongon.backend.domain.enums.EventStatusEnum;
 import com.shongon.backend.domain.request.event.CreateEventRequest;
 import com.shongon.backend.domain.request.event.UpdateEventRequest;
 import com.shongon.backend.domain.request.ticket_type.UpdateTicketTypeRequest;
@@ -154,5 +155,10 @@ public class EventServiceImpl implements EventService {
         }
 
         getEventForOrganizer(organizerId, eventId).ifPresent(eventRepository::delete);
+    }
+
+    @Override
+    public Page<Event> listPublishedEvents(Pageable pageable) {
+        return eventRepository.findByStatus(EventStatusEnum.PUBLISHED, pageable);
     }
 }
