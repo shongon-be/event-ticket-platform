@@ -1,6 +1,7 @@
 package com.shongon.backend.controller;
 
 import com.shongon.backend.domain.dto.response.event.ListPublishedEventResponseDTO;
+import com.shongon.backend.domain.entity.Event;
 import com.shongon.backend.mapper.EventMapper;
 import com.shongon.backend.service.blueprint.EventService;
 import lombok.AccessLevel;
@@ -11,6 +12,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -23,9 +25,22 @@ public class PublishedEventController {
     EventMapper eventMapper;
 
     @GetMapping
-    public ResponseEntity<Page<ListPublishedEventResponseDTO>> listPublishedEvents(Pageable pageable) {
-        return ResponseEntity.ok(eventService.listPublishedEvents(pageable)
-                .map(eventMapper::toListPublishedEventResponseDTO));
+    public ResponseEntity<Page<ListPublishedEventResponseDTO>> listPublishedEvents(
+            @RequestParam(required = false) String query,
+            Pageable pageable
+    ) {
+
+        Page<Event> events;
+        if(query != null && !query.trim().isEmpty()) {
+            events = eventService.searchPublishedEvents(query, pageable);
+        } else {
+            events = eventService.listPublishedEvents(pageable);
+        }
+
+        return ResponseEntity.ok(
+                events.map(eventMapper::toListPublishedEventResponseDTO)
+        );
     }
+
 
 }
