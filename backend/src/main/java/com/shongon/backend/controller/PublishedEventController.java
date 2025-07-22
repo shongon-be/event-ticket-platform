@@ -1,5 +1,6 @@
 package com.shongon.backend.controller;
 
+import com.shongon.backend.domain.dto.response.event.GetPublishedEventDetailsResponseDTO;
 import com.shongon.backend.domain.dto.response.event.ListPublishedEventResponseDTO;
 import com.shongon.backend.domain.entity.Event;
 import com.shongon.backend.mapper.EventMapper;
@@ -10,10 +11,9 @@ import lombok.experimental.FieldDefaults;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/published-events")
@@ -42,5 +42,14 @@ public class PublishedEventController {
         );
     }
 
+    @GetMapping(path = "/{eventId}")
+    public ResponseEntity<GetPublishedEventDetailsResponseDTO> getPublishedEventDetails(
+        @PathVariable UUID eventId
+    ){
 
+        return eventService.getPublishedEvent(eventId)
+                .map(eventMapper::toGetPublishedEventDetailsResponseDTO)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
 }
