@@ -1,8 +1,6 @@
 package com.shongon.backend.domain.dto.response.event;
 
-import com.shongon.backend.domain.dto.response.ticket_type.GetEventDetailsTiketTypesResponseDTO;
 import com.shongon.backend.domain.dto.response.ticket_type.GetPublishedEventDetailsTiketTypesResponseDTO;
-import com.shongon.backend.domain.enums.EventStatusEnum;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;

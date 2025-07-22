@@ -18,7 +18,6 @@ import java.util.UUID;
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ListEventResponseDTO {
-
     UUID id;
     String name;
     LocalDateTime start;
@@ -28,5 +27,4 @@ public class ListEventResponseDTO {
     LocalDateTime salesEnd;
     EventStatusEnum status;
     List<ListEventTicketTypeResponseDTO> ticketTypes = new ArrayList<>();
-
 }
