@@ -1,10 +1,7 @@
 package com.shongon.backend.controller;
 
 import com.shongon.backend.domain.dto.response.ErrorResponseDTO;
-import com.shongon.backend.exception.EventNotFoundException;
-import com.shongon.backend.exception.EventUpdateException;
-import com.shongon.backend.exception.TicketTypeNotFoundException;
-import com.shongon.backend.exception.UserNotFoundException;
+import com.shongon.backend.exception.*;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -20,6 +17,31 @@ import java.util.List;
 @RestControllerAdvice
 @Slf4j
 public class GlobalExceptionHandler {
+
+    @ExceptionHandler(TicketSoldOutException.class)
+    public ResponseEntity<ErrorResponseDTO> handleTicketSoldOutException(TicketSoldOutException ex) {
+        log.error("Caught TicketSoldOutException", ex);
+        ErrorResponseDTO errorDto = new ErrorResponseDTO();
+        errorDto.setError("Ticket are sold out for this ticket type");
+        return new ResponseEntity<>(errorDto, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(QrCodeNotFoundException.class)
+    public ResponseEntity<ErrorResponseDTO> handleQrCodeNotFoundException(QrCodeNotFoundException ex) {
+        log.error("Caught QrCodeNotFoundException", ex);
+        ErrorResponseDTO errorDto = new ErrorResponseDTO();
+        errorDto.setError("QR code not found");
+        return new ResponseEntity<>(errorDto, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(QrCodeGenerationException.class)
+    public ResponseEntity<ErrorResponseDTO> handleQrCodeGenerationException(QrCodeGenerationException ex) {
+        log.error("Caught QrCodeGenerationException", ex);
+        ErrorResponseDTO errorDto = new ErrorResponseDTO();
+        errorDto.setError("Unable to generate QR code");
+        return new ResponseEntity<>(errorDto, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
 
     @ExceptionHandler(EventUpdateException.class)
     public ResponseEntity<ErrorResponseDTO> handleEventUpdateException(EventUpdateException ex) {
