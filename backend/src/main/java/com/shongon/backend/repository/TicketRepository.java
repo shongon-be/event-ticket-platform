@@ -17,5 +17,6 @@ public interface TicketRepository extends JpaRepository<Ticket, UUID> {
     @EntityGraph(attributePaths = "ticketType")
     Page<Ticket> findByPurchaserId(UUID purchaserID, Pageable pageable);
 
+    @EntityGraph(attributePaths = {"ticketType", "ticketType.event"})
     Optional<Ticket> findByIdAndPurchaserId(UUID ticketId, UUID purchaserId);
 }

@@ -48,7 +48,7 @@ public class TicketController {
     ) {
 
         return ticketService
-                .getTicketForPurchaser(ticketId, parseUserId(jwt))
+                .getTicketForPurchaser(parseUserId(jwt), ticketId)
                 .map(ticketMapper::toGetTicketDetailsResponseDTO)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
