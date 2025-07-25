@@ -10,6 +10,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -22,5 +23,10 @@ public class TicketServiceImpl implements TicketService {
     @Override
     public Page<Ticket> listTicketsForPurchaser(UUID purchaserId, Pageable pageable) {
         return ticketRepository.findByPurchaserId(purchaserId,pageable);
+    }
+
+    @Override
+    public Optional<Ticket> getTicketForPurchaser(UUID purchaserId, UUID ticketId) {
+        return ticketRepository.findByIdAndPurchaserId(ticketId, purchaserId);
     }
 }

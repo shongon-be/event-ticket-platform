@@ -14,6 +14,7 @@ import com.shongon.backend.service.blueprint.QrCodeService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.imageio.ImageIO;
@@ -25,6 +26,7 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class QrCodeServiceImpl implements QrCodeService {
 
@@ -53,6 +55,19 @@ public class QrCodeServiceImpl implements QrCodeService {
             throw new QrCodeGenerationException("Failed to generate QR code", e);
         }
 
+    }
+
+    @Override
+    public byte[] getQrCodeImageForUserAndTicket(UUID userId, UUID ticketId) {
+        QrCode qrCode = qrCodeRepository.findByTicketIdAndTicketPurchaserId(ticketId, userId)
+                .orElseThrow(QrCodeGenerationException::new);
+
+        try {
+            return Base64.getDecoder().decode(qrCode.getValue());
+        } catch (IllegalArgumentException e) {
+            log.error("Invalid base64 QR Code for ticket ID: {}", ticketId, e);
+            throw new QrCodeGenerationException();
+        }
     }
 
     private String generateQrCodeImage(UUID uniqueId) throws WriterException, IOException {
