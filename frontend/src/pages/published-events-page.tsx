@@ -7,10 +7,11 @@ import {
   PublishedEventTicketTypeDetails,
 } from "@/domain/domain";
 import { getPublishedEvent } from "@/lib/api";
-import { AlertCircle, MapPin } from "lucide-react";
+import { AlertCircle, Calendar, MapPin } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useAuth } from "react-oidc-context";
 import { Link, useNavigate, useParams } from "react-router";
+import dayjs from 'dayjs';
 
 const PublishedEventsPage: React.FC = () => {
   const { isAuthenticated, isLoading, signinRedirect, signoutRedirect } =
@@ -101,6 +102,10 @@ const PublishedEventsPage: React.FC = () => {
           {/* Left Column */}
           <div className="space-y-4">
             <h1 className="text-3xl font-bold">{publishedEvent?.name}</h1>
+            <p className="text-lg flex gap-2 text-gray-300">
+              <Calendar  />
+                {dayjs(publishedEvent?.start).format('HH:mm, DD MMM YYYY')} - {dayjs(publishedEvent?.end).format('HH:mm, DD MMM YYYY')}
+            </p>
             <p className="text-lg flex gap-2 text-gray-300">
               <MapPin />
               {publishedEvent?.venue}
