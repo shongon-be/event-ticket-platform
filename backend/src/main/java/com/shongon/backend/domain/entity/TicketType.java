@@ -18,7 +18,6 @@ import java.util.UUID;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class TicketType {
 
@@ -27,7 +26,7 @@ public class TicketType {
     @GeneratedValue(strategy = GenerationType.UUID)
     UUID id;
 
-    @Column(name = "ticket_type", nullable = false)
+    @Column(name = "ticket_type_name", nullable = false)
     String name;
 
     @Column(name = "price", nullable = false)
