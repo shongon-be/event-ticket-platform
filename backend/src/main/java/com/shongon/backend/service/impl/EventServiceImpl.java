@@ -6,6 +6,7 @@ import com.shongon.backend.domain.entity.User;
 import com.shongon.backend.domain.enums.EventStatusEnum;
 import com.shongon.backend.domain.request.event.CreateEventRequest;
 import com.shongon.backend.domain.request.event.UpdateEventRequest;
+import com.shongon.backend.domain.request.ticket_type.CreateTicketTypeRequest;
 import com.shongon.backend.domain.request.ticket_type.UpdateTicketTypeRequest;
 import com.shongon.backend.exception.EventNotFoundException;
 import com.shongon.backend.exception.EventUpdateException;
@@ -36,39 +37,10 @@ public class EventServiceImpl implements EventService {
 
     @Override
     @Transactional
-    public Event createEvent(UUID organizerId, CreateEventRequest event) {
-
-        User organizer = userRepository.findById(organizerId)
-                .orElseThrow(() -> new UserNotFoundException(
-                        String.format("User with ID '%s' not found", organizerId)
-                ));
-
-        Event eventToCreate = new Event();
-
-        List<TicketType> ticketTypesToCreate = event.getTicketTypes().stream().map(
-                ticketType -> {
-                    TicketType ticketTypeToCreate = new TicketType();
-                    ticketTypeToCreate.setName(ticketType.getName());
-                    ticketTypeToCreate.setPrice(ticketType.getPrice());
-                    ticketTypeToCreate.setDescription(ticketType.getDescription());
-                    ticketTypeToCreate.setTotalAvailable(ticketType.getTotalAvailable());
-                    ticketTypeToCreate.setEvent(eventToCreate);
-                    return ticketTypeToCreate;
-                }
-        ).toList();
-
-
-        eventToCreate.setName(event.getName());
-        eventToCreate.setStart(event.getStartDate());
-        eventToCreate.setEnd(event.getEndDate());
-        eventToCreate.setVenue(event.getVenue());
-        eventToCreate.setSalesStart(event.getSalesStart());
-        eventToCreate.setSalesEnd(event.getSalesEnd());
-        eventToCreate.setStatus(event.getStatus());
-        eventToCreate.setOrganizer(organizer);
-        eventToCreate.setTicketTypes(ticketTypesToCreate);
-
-        return eventRepository.save(eventToCreate);
+    public Event createEvent(UUID userId, CreateEventRequest request) {
+        User organizer = findUserById(userId);
+        Event event = buildEventFromRequest(request, organizer);
+        return eventRepository.save(event);
     }
 
     @Override
@@ -83,80 +55,24 @@ public class EventServiceImpl implements EventService {
 
     @Override
     @Transactional
-    public Event updateEventForOrganizer(UUID organizerId, UUID eventId, UpdateEventRequest event) {
-        if (event.getId() == null) {
-            throw new EventUpdateException("Event ID cannot be null");
-        }
+    public Event updateEventForOrganizer(UUID organizerId, UUID eventId, UpdateEventRequest request) {
+        validateUpdateRequest(eventId, request);
 
-        if (!eventId.equals(event.getId())) {
-            throw new EventUpdateException("Cannot update the ID of an event");
-        }
+        Event existingEvent = findEventByIdAndOrganizer(eventId, organizerId);
+        updateEventBasicInfo(existingEvent, request);
+        updateEventTicketTypes(existingEvent, request.getTicketTypes());
 
-        Event existingEvent = eventRepository.findByIdAndOrganizerId(eventId, organizerId)
-                .orElseThrow(() -> new EventNotFoundException(
-                        String.format("Event with ID '%s' does not exist", eventId))
-                );
-
-        existingEvent.setName(event.getName());
-        existingEvent.setStart(event.getStart());
-        existingEvent.setEnd(event.getEnd());
-        existingEvent.setVenue(event.getVenue());
-        existingEvent.setSalesStart(event.getSalesStart());
-        existingEvent.setSalesEnd(event.getSalesEnd());
-        existingEvent.setStatus(event.getStatus());
-
-        Set<UUID> requestTicketTypeIds = event.getTicketTypes().stream()
-                .map(UpdateTicketTypeRequest::getId)
-                .filter(Objects::nonNull)
-                .collect(Collectors.toSet());
-
-        existingEvent.getTicketTypes().removeIf(existingTicketType ->
-                !requestTicketTypeIds.contains(existingTicketType.getId())
-        );
-
-        Map<UUID, TicketType> existingTicketTypesIndex = existingEvent.getTicketTypes().stream()
-                .collect(Collectors.toMap(TicketType::getId, Function.identity()));
-
-        for (UpdateTicketTypeRequest ticketType : event.getTicketTypes()) {
-            if (ticketType.getId() == null) {
-                // Create
-                TicketType ticketTypeToCreate = new TicketType();
-                ticketTypeToCreate.setName(ticketType.getName());
-                ticketTypeToCreate.setPrice(ticketType.getPrice());
-                ticketTypeToCreate.setDescription(ticketType.getDescription());
-                ticketTypeToCreate.setTotalAvailable(ticketType.getTotalAvailable());
-                ticketTypeToCreate.setEvent(existingEvent);
-                existingEvent.getTicketTypes().add(ticketTypeToCreate);
-
-            } else if (existingTicketTypesIndex.containsKey(ticketType.getId())) {
-                // Update
-                TicketType existingTicketType = existingTicketTypesIndex.get(ticketType.getId());
-                existingTicketType.setName(ticketType.getName());
-                existingTicketType.setPrice(ticketType.getPrice());
-                existingTicketType.setDescription(ticketType.getDescription());
-                existingTicketType.setTotalAvailable(ticketType.getTotalAvailable());
-            } else {
-                throw new TicketTypeNotFoundException(
-                        String.format("Ticket type with ID '%s' does not exist", ticketType.getId())
-                );
-            }
-        }
-
-            return eventRepository.save(existingEvent);
+        return eventRepository.save(existingEvent);
     }
 
     @Override
     @Transactional
     public void deleteEventForOrganizer(UUID organizerId, UUID eventId) {
-        if(eventRepository.findById(eventId).isEmpty()){
-            throw new EventNotFoundException(
-                    String.format("Event with ID '%s' not found", eventId)
-            );
-        }
-
+        validateEventExists(eventId);
         getEventForOrganizer(organizerId, eventId).ifPresent(eventRepository::delete);
     }
 
+    // PublishedEventController
     @Override
     public Page<Event> listPublishedEvents(Pageable pageable) {
         return eventRepository.findByStatus(EventStatusEnum.PUBLISHED, pageable);
@@ -170,5 +86,158 @@ public class EventServiceImpl implements EventService {
     @Override
     public Optional<Event> getPublishedEvent(UUID eventId) {
         return eventRepository.findByIdAndStatus(eventId, EventStatusEnum.PUBLISHED);
+    }
+
+
+    // Private helper methods
+    private User findUserById(UUID userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException(
+                        String.format("User with ID '%s' not found", userId)
+                ));
+    }
+
+    private Event buildEventFromRequest(CreateEventRequest request, User organizer) {
+        Event event = new Event();
+        setEventBasicInfo(event, request, organizer);
+
+        List<TicketType> ticketTypes = createTicketTypesForNewEvent(request, event);
+        event.setTicketTypes(ticketTypes);
+
+        return event;
+    }
+
+        private void setEventBasicInfo(Event event, CreateEventRequest request, User organizer) {
+            event.setName(request.getName());
+            event.setStart(request.getStartDate());
+            event.setEnd(request.getEndDate());
+            event.setVenue(request.getVenue());
+            event.setSalesStart(request.getSalesStart());
+            event.setSalesEnd(request.getSalesEnd());
+            event.setStatus(request.getStatus());
+            event.setOrganizer(organizer);
+        }
+
+        private List<TicketType> createTicketTypesForNewEvent(CreateEventRequest request, Event event) {
+            return request.getTicketTypes()
+                    .stream()
+                    .map(ticketTypeRequest ->
+                            createTicketType(ticketTypeRequest, event)
+                    )
+                    .toList();
+        }
+
+        private TicketType createTicketType(CreateTicketTypeRequest ticketTypeRequest, Event event) {
+            TicketType ticketType = new TicketType();
+            ticketType.setName(ticketTypeRequest.getName());
+            ticketType.setPrice(ticketTypeRequest.getPrice());
+            ticketType.setDescription(ticketTypeRequest.getDescription());
+            ticketType.setTotalAvailable(ticketTypeRequest.getTotalAvailable());
+            ticketType.setEvent(event);
+            return ticketType;
+        }
+
+    private static void validateUpdateRequest(UUID eventId, UpdateEventRequest request) {
+        if (request.getId() == null) {
+            throw new EventUpdateException("Event ID cannot be null");
+        }
+
+        if (!eventId.equals(request.getId())) {
+            throw new EventUpdateException("Cannot update the ID of an event");
+        }
+    }
+
+    private Event findEventByIdAndOrganizer(UUID eventId, UUID organizerId) {
+        return eventRepository.findByIdAndOrganizerId(eventId, organizerId)
+                .orElseThrow(() -> new EventNotFoundException(
+                        String.format("Event with ID '%s' does not exist", eventId)
+                ));
+    }
+
+    private void updateEventBasicInfo(Event event, UpdateEventRequest request) {
+        event.setName(request.getName());
+        event.setStart(request.getStart());
+        event.setEnd(request.getEnd());
+        event.setVenue(request.getVenue());
+        event.setSalesStart(request.getSalesStart());
+        event.setSalesEnd(request.getSalesEnd());
+        event.setStatus(request.getStatus());
+    }
+
+    private void updateEventTicketTypes(Event existingEvent, List<UpdateTicketTypeRequest> ticketTypeRequests) {
+        // Lấy danh sách ID của ticket types từ request
+        Set<UUID> requestTicketTypeIds = getTicketTypeIdsFromRequest(ticketTypeRequests);
+
+        // Xóa các ticket types không có trong request
+        removeObsoleteTicketTypes(existingEvent, requestTicketTypeIds);
+
+        // Tạo map để tra cứu nhanh existing ticket types
+        Map<UUID, TicketType> existingTicketTypesMap = createTicketTypeMap(existingEvent);
+
+        // Xử lý từng ticket type trong request
+        processTicketTypeRequests(existingEvent, ticketTypeRequests, existingTicketTypesMap);
+    }
+
+        private Set<UUID> getTicketTypeIdsFromRequest(List<UpdateTicketTypeRequest> ticketTypeRequests) {
+            return ticketTypeRequests.stream()
+                    .map(UpdateTicketTypeRequest::getId)
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toSet());
+        }
+
+        private void removeObsoleteTicketTypes(Event event, Set<UUID> requestTicketTypeIds) {
+            event.getTicketTypes().removeIf(ticketType ->
+                    !requestTicketTypeIds.contains(ticketType.getId())
+            );
+        }
+
+        private Map<UUID, TicketType> createTicketTypeMap(Event event) {
+            return event.getTicketTypes().stream()
+                    .collect(Collectors.toMap(TicketType::getId, Function.identity()));
+        }
+
+        private void processTicketTypeRequests(Event event,
+                                               List<UpdateTicketTypeRequest> requests,
+                                               Map<UUID, TicketType> existingMap) {
+            for (UpdateTicketTypeRequest request : requests) {
+                if (request.getId() == null) {
+                    // Tạo mới ticket type
+                    createAndAddNewTicketType(event, request);
+                } else if (existingMap.containsKey(request.getId())) {
+                    // Cập nhật ticket type có sẵn
+                    updateExistingTicketType(existingMap.get(request.getId()), request);
+                } else {
+                    // Ticket type không tồn tại
+                    throw new TicketTypeNotFoundException(
+                            String.format("Ticket type with ID '%s' does not exist", request.getId())
+                    );
+                }
+            }
+        }
+
+            private void createAndAddNewTicketType(Event event, UpdateTicketTypeRequest request) {
+                TicketType newTicketType = new TicketType();
+                updateTicketTypeFields(newTicketType, request);
+                newTicketType.setEvent(event);
+                event.getTicketTypes().add(newTicketType);
+            }
+
+            private void updateExistingTicketType(TicketType ticketType, UpdateTicketTypeRequest request) {
+                updateTicketTypeFields(ticketType, request);
+            }
+
+                private void updateTicketTypeFields(TicketType ticketType, UpdateTicketTypeRequest request) {
+                    ticketType.setName(request.getName());
+                    ticketType.setPrice(request.getPrice());
+                    ticketType.setDescription(request.getDescription());
+                    ticketType.setTotalAvailable(request.getTotalAvailable());
+                }
+
+    private void validateEventExists(UUID eventId) {
+        if(eventRepository.findById(eventId).isEmpty()){
+            throw new EventNotFoundException(
+                    String.format("Event with ID '%s' not found", eventId)
+            );
+        }
     }
 }

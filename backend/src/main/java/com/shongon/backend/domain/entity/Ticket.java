@@ -8,7 +8,6 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -41,10 +40,10 @@ public class Ticket {
     User purchaser;
 
     @OneToMany(mappedBy = "ticket", cascade = CascadeType.ALL)
-    List<TicketValidation> validations = new ArrayList<>();
+    List<TicketValidation> validations;
 
     @OneToMany(mappedBy = "ticket", cascade = CascadeType.ALL)
-    List<QrCode> qrCodes = new ArrayList<>();
+    List<QrCode> qrCodes;
 
     @CreatedDate
     @Column(name = "created_at", nullable = false, updatable = false)

@@ -8,7 +8,6 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -55,13 +54,13 @@ public class Event {
     User organizer;
 
     @ManyToMany(mappedBy = "attendingEvents")
-    List<User> attendees = new ArrayList<>();
+    List<User> attendees;
 
     @ManyToMany(mappedBy = "staffingEvents")
-    List<User> staff = new ArrayList<>();
+    List<User> staff;
 
     @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
-    List<TicketType> ticketTypes = new ArrayList<>();
+    List<TicketType> ticketTypes;
 
     @CreatedDate
     @Column(name = "created_at", nullable = false, updatable = false)

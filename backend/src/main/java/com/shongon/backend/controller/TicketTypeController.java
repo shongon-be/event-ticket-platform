@@ -29,12 +29,9 @@ public class TicketTypeController {
     @PostMapping(path = "/{ticketTypeId}/tickets")
     public ResponseEntity<Void> purchaseTicket(
             @AuthenticationPrincipal Jwt jwt,
-            @PathVariable UUID ticketTypeId
-    ) throws WriterException {
-
+            @PathVariable UUID ticketTypeId ) throws WriterException {
         ticketTypeService.purchaseTicket(parseUserId(jwt), ticketTypeId);
+
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-
     }
-
 }

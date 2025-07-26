@@ -25,9 +25,8 @@ public class TicketValidationController {
     TicketValidationMapper ticketValidationMapper;
 
     @PostMapping
-    public ResponseEntity<TicketValidationResponseDTO> validateTicket(
-            @RequestBody TicketValidationRequestDTO request
-    ) {
+    public ResponseEntity<TicketValidationResponseDTO> validateTicket(@RequestBody TicketValidationRequestDTO request) {
+
         TicketValidation ticketValidation;
 
         TicketValidationMethod method = request.getMethod();
@@ -42,5 +41,4 @@ public class TicketValidationController {
                 ticketValidationMapper.toTicketValidationResponseDTO(ticketValidation)
         );
     }
-
 }

@@ -21,7 +21,6 @@ public class JwtAuthenticationConverter implements Converter<Jwt, JwtAuthenticat
         Collection<GrantedAuthority> authorities = extractAuthorities(jwt);
 
         return new JwtAuthenticationToken(jwt, authorities);
-
     }
 
 

@@ -34,32 +34,49 @@ public class TicketTypeServiceImpl implements TicketTypeService {
     @Override
     @Transactional
     public Ticket purchaseTicket(UUID userId, UUID ticketTypeId) throws WriterException {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserNotFoundException(
-                        String.format("User with ID '%s' not found", userId)
-                ));
+        User purchaser = findUserById(userId);
+        TicketType ticketType = findTicketTypeByIdWithLock(ticketTypeId);
 
-        TicketType ticketType = ticketTypeRepository.findByIdWithLock(ticketTypeId)
-                .orElseThrow(() -> new TicketTypeNotFoundException(
-                        String.format("Ticket type with ID '%s' not found", ticketTypeId)
-                ));
+        validateTicketAvailability(ticketType);
 
-        int purchasedTickets = ticketRepository.countByTicketTypeId(ticketType.getId());
-        Integer totalAvailable = ticketType.getTotalAvailable();
-
-        if (purchasedTickets + 1 > totalAvailable) {
-            throw new TicketSoldOutException();
-        }
-
-        Ticket ticket = new Ticket();
-        ticket.setStatus(TicketStatusEnum.PURCHASED);
-        ticket.setTicketType(ticketType);
-        ticket.setPurchaser(user);
-
+        Ticket ticket = createTicket(purchaser, ticketType);
         Ticket savedTicket = ticketRepository.save(ticket);
 
         qrCodeService.generateQrCode(savedTicket);
 
         return ticketRepository.save(savedTicket);
+    }
+
+    // Private helper methods để tách logic và tăng tính rõ ràng
+    private User findUserById(UUID userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException(
+                        String.format("User with ID '%s' not found", userId)
+                ));
+    }
+
+    private TicketType findTicketTypeByIdWithLock(UUID ticketTypeId) {
+        return ticketTypeRepository.findByIdWithLock(ticketTypeId)
+                .orElseThrow(() -> new TicketTypeNotFoundException(
+                        String.format("Ticket type with ID '%s' not found", ticketTypeId)
+                ));
+    }
+
+    private void validateTicketAvailability(TicketType ticketType) {
+        int purchasedTickets = ticketRepository.countByTicketTypeId(ticketType.getId());
+        int totalAvailable = ticketType.getTotalAvailable();
+
+        // Kiểm tra xem còn vé không (tính cả vé sắp mua)
+        if (purchasedTickets >= totalAvailable) {
+            throw new TicketSoldOutException();
+        }
+    }
+
+    private Ticket createTicket(User purchaser, TicketType ticketType) {
+        Ticket ticket = new Ticket();
+            ticket.setStatus(TicketStatusEnum.PURCHASED);
+            ticket.setTicketType(ticketType);
+            ticket.setPurchaser(purchaser);
+        return ticket;
     }
 }

@@ -23,31 +23,24 @@ public class UserProvisioningFilter extends OncePerRequestFilter {
     private final UserRepository userRepository;
 
     @Override
-    protected void doFilterInternal(
-            HttpServletRequest request,
-            HttpServletResponse response,
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
             FilterChain filterChain) throws ServletException, IOException {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        if (authentication != null &&
-                authentication.isAuthenticated() &&
-                authentication.getPrincipal() instanceof Jwt jwt
-        ) {
+        if (authentication != null && authentication.isAuthenticated() &&
+                authentication.getPrincipal() instanceof Jwt jwt) {
 
             UUID keycloakId = UUID.fromString(jwt.getSubject());
 
             if (userRepository.findById(keycloakId).isEmpty()) {
-
                 User user = new User();
-
-                user.setId(keycloakId);
-                user.setName(jwt.getClaimAsString("preferred_username"));
-                user.setEmail(jwt.getClaimAsString("email"));
+                    user.setId(keycloakId);
+                    user.setName(jwt.getClaimAsString("preferred_username"));
+                    user.setEmail(jwt.getClaimAsString("email"));
 
                 userRepository.save(user);
             }
-
         }
 
         filterChain.doFilter(request, response);
